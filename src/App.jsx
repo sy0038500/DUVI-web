@@ -74,6 +74,12 @@ const domainColorConfig = {
   },
 }
 
+const fallbackDomainColor = {
+  name: '기본',
+  dark: '#64748b',
+  steps: ['#f8fafc', '#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155'],
+}
+
 function getDomainColor(domainKey, value) {
   const config = domainColorConfig[domainKey] ?? fallbackDomainColor
   const steps = config.steps

@@ -625,6 +625,19 @@ export default function App() {
     />
   )}
       </main>
+
+      <footer className="site-footer">
+        <div className="footer-inner">
+          <div>
+            <strong>© 2026 온도(溫都). All rights reserved.</strong>
+            <p>DUVI: 서울 행정동 도시활력지표 프로젝트</p>
+          </div>
+          <p className="footer-desc">
+            온도(溫都)는 ‘따뜻한 도시’라는 뜻으로, 데이터 기반 도시문제 해결을 통해
+            도시에 따뜻한 온기를 불어넣겠다는 의미를 담고 있습니다.
+          </p>
+        </div>
+      </footer>
     </div>
   )
 }

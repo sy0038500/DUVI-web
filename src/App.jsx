@@ -426,11 +426,12 @@ export default function App() {
           <>
         <section className="hero">
           <div className="hero-copy">
-            <p className="eyebrow">Data-driven Urban Vitality Index</p>
+            <p className="eyebrow">Dynamic Urban Vitality Index</p>
             <h1>서울 426개 행정동의 도시활력을<br />연도별로 비교합니다.</h1>
             <p>
-              상권, 인구, 주택위험, 생활시설, 교통, SDOT 유동인구, 에너지, 생활인구를 결합해
-              2022년부터 2026년까지의 DUVI 점수와 7등급을 산정했습니다.
+              DUVI는 Dynamic Urban Vitality Index의 약자로, 정적인 시설 수를 넘어
+              인구 변화, 이동 흐름, 상권 활동, 주거위험 등 시간에 따라 변화하는 도시의
+              동적 활력을 진단합니다.
             </p>
           </div>
 
@@ -1039,9 +1040,10 @@ const domains = [
         <p className="eyebrow">Detailed Explorer</p>
         <h1>분야별 도시활력 세부탐색</h1>
         <p>
-          종합 DUVI는 모든 영역을 동일 가중 방식으로 결합한 결과입니다. 세부탐색에서는
-          사용자의 관심 목적에 따라 상권, 인구, 주택위험, 생활시설, 교통, 에너지, 생활인구
-          영역을 따로 선택해 지도와 순위로 확인할 수 있습니다.
+          DUVI는 도시를 고정된 시설 수가 아니라 변화하는 인구, 이동, 상권, 주거,
+          에너지 흐름으로 해석하는 동적 도시활력지표입니다. 세부탐색에서는 사용자의
+          관심 목적에 따라 상권, 인구, 주택위험, 생활시설, 교통, 에너지, 생활인구,
+          안전 지표를 개별 지도와 순위로 확인할 수 있습니다.
         </p>
       </div>
 

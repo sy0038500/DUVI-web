@@ -17,11 +17,6 @@ const gradeMeta = {
 }
 
 const domainColorConfig = {
-  duvi_score: {
-    name: '종합 DUVI',
-    dark: '#08519c',
-    steps: ['#eff6ff', '#dbeafe', '#bfdbfe', '#93c5fd', '#60a5fa', '#2563eb', '#08519c'],
-  },
   'domain_score__상권': {
     name: '상권',
     dark: '#7c3aed',
@@ -87,7 +82,7 @@ function getDomainColor(domainKey, value) {
   if (value === null || value === undefined || Number.isNaN(value)) return '#d9d9d9'
 
   // 세부탐색 지도는 5단계로 단순화
-  if (value >= 80) return steps[7]  // 매우 높음
+  if (value >= 80) return steps[6]  // 매우 높음
   if (value >= 60) return steps[5]  // 높음
   if (value >= 40) return steps[3]  // 보통
   if (value >= 20) return steps[1]  // 낮음
@@ -97,26 +92,26 @@ function getDomainColor(domainKey, value) {
 function makeDomainLegend(domainKey) {
   if (domainKey === 'duvi_score') {
     return [
-      { label: '80점 이상', desc: '매우 높음', color: steps[6] },
-      { label: '60~80점', desc: '높음', color: steps[5] },
-      { label: '40~60점', desc: '보통', color: steps[3] },
-      { label: '20~40점', desc: '낮음', color: steps[1] },
-      { label: '20점 미만', desc: '매우 낮음', color: steps[0] },
+      { label: '1등급', desc: '매우 높음', color: gradeMeta[1].color },
+      { label: '2등급', desc: '높음', color: gradeMeta[2].color },
+      { label: '3등급', desc: '다소 높음', color: gradeMeta[3].color },
+      { label: '4등급', desc: '보통', color: gradeMeta[4].color },
+      { label: '5등급', desc: '다소 낮음', color: gradeMeta[5].color },
+      { label: '6등급', desc: '낮음', color: gradeMeta[6].color },
+      { label: '7등급', desc: '매우 낮음', color: gradeMeta[7].color },
       { label: '자료 없음', desc: '미산정/결측', color: '#d9d9d9' },
     ]
   }
 
-  const config = domainColorConfig[domainKey] ?? domainColorConfig.duvi_score
+  const config = domainColorConfig[domainKey] ?? fallbackDomainColor
   const steps = config.steps
 
   return [
-    { label: '85점 이상', desc: '매우 높음', color: steps[6] },
-    { label: '70~85점', desc: '높음', color: steps[5] },
-    { label: '55~70점', desc: '다소 높음', color: steps[4] },
-    { label: '40~55점', desc: '보통', color: steps[3] },
-    { label: '25~40점', desc: '다소 낮음', color: steps[2] },
-    { label: '10~25점', desc: '낮음', color: steps[1] },
-    { label: '10점 미만', desc: '매우 낮음', color: steps[0] },
+    { label: '80점 이상', desc: '매우 높음', color: steps[6] },
+    { label: '60~80점', desc: '높음', color: steps[5] },
+    { label: '40~60점', desc: '보통', color: steps[3] },
+    { label: '20~40점', desc: '낮음', color: steps[1] },
+    { label: '20점 미만', desc: '매우 낮음', color: steps[0] },
     { label: '자료 없음', desc: '미산정/결측', color: '#d9d9d9' },
   ]
 }
@@ -243,14 +238,10 @@ export default function App() {
 
     return domains.map((domain) => {
       const value = toNumber(selectedDetail[domain.key])
-      return [
-        { label: '80점 이상', desc: '매우 높음', color: steps[6] },
-        { label: '60~80점', desc: '높음', color: steps[5] },
-        { label: '40~60점', desc: '보통', color: steps[3] },
-        { label: '20~40점', desc: '낮음', color: steps[1] },
-        { label: '20점 미만', desc: '매우 낮음', color: steps[0] },
-        { label: '자료 없음', desc: '미산정/결측', color: '#d9d9d9' },
-      ]
+      return {
+        ...domain,
+        value,
+      }
     })
   }, [selectedDetail])
 
@@ -1106,7 +1097,12 @@ const domains = [
           <h2 className="domain-title">
             <span
               className="domain-color-dot"
-              style={{ backgroundColor: domainColorConfig[selectedDomain]?.dark }}
+              style={{
+                backgroundColor:
+                  selectedDomain === 'duvi_score'
+                    ? gradeMeta[1].color
+                    : domainColorConfig[selectedDomain]?.dark ?? fallbackDomainColor.dark
+              }}
             />
             {selectedMeta?.label}
           </h2>

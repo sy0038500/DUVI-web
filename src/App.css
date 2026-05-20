@@ -89,6 +89,8 @@ button {
 }
 
 main {
+  width: min(100%, 1720px);
+  margin: 0 auto;
   padding: 0 3rem 4rem;
 }
 
@@ -165,8 +167,8 @@ main {
 
 .dashboard {
   display: grid;
-  grid-template-columns: 320px minmax(420px, 1fr) 320px;
-  gap: 1rem;
+  grid-template-columns: 320px minmax(680px, 1fr) 340px;
+  gap: 1.2rem;
   align-items: stretch;
 }
 
@@ -280,12 +282,13 @@ main {
 
 .map-card {
   overflow: hidden;
-  min-height: 680px;
+  min-height: 640px;
+  height: 640px;
 }
 
 .map {
   width: 100%;
-  height: 680px;
+  height: 100%;
 }
 
 .leaflet-container {
@@ -293,7 +296,9 @@ main {
 }
 
 .detail-panel {
-  min-height: 680px;
+  min-height: 640px;
+  height: 640px;
+  overflow-y: auto;
 }
 
 .score-box {
@@ -440,10 +445,15 @@ td {
   .detail-panel,
   .map-card {
     min-height: auto;
+    height: auto;
   }
 
   .method-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .map {
+    height: 560px;
   }
 }
 
@@ -1075,4 +1085,13 @@ html {
 
 .brand:active {
   transform: scale(0.98);
+}
+
+.hero {
+  max-width: 100%;
+}
+
+.site-header {
+  padding-left: max(3rem, calc((100vw - 1720px) / 2 + 3rem));
+  padding-right: max(3rem, calc((100vw - 1720px) / 2 + 3rem));
 }

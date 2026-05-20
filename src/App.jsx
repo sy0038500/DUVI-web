@@ -75,17 +75,17 @@ const domainColorConfig = {
 }
 
 function getDomainColor(domainKey, value) {
-  const config = domainColorConfig[domainKey] ?? domainColorConfig.duvi_score
+  const config = domainColorConfig[domainKey] ?? fallbackDomainColor
   const steps = config.steps
 
   if (value === null || value === undefined || Number.isNaN(value)) return '#d9d9d9'
-  if (value >= 85) return steps[6]
-  if (value >= 70) return steps[5]
-  if (value >= 55) return steps[4]
-  if (value >= 40) return steps[3]
-  if (value >= 25) return steps[2]
-  if (value >= 10) return steps[1]
-  return steps[0]
+
+  // 세부탐색 지도는 5단계로 단순화
+  if (value >= 80) return steps[6]  // 매우 높음
+  if (value >= 60) return steps[5]  // 높음
+  if (value >= 40) return steps[3]  // 보통
+  if (value >= 20) return steps[1]  // 낮음
+  return steps[0]                   // 매우 낮음
 }
 
 function makeDomainLegend(domainKey) {
@@ -239,10 +239,14 @@ export default function App() {
 
     return domains.map((domain) => {
       const value = toNumber(selectedDetail[domain.key])
-      return {
-        ...domain,
-        value,
-      }
+      return [
+        { label: '80점 이상', desc: '매우 높음', color: steps[6] },
+        { label: '60~80점', desc: '높음', color: steps[5] },
+        { label: '40~60점', desc: '보통', color: steps[3] },
+        { label: '20~40점', desc: '낮음', color: steps[1] },
+        { label: '20점 미만', desc: '매우 낮음', color: steps[0] },
+        { label: '자료 없음', desc: '미산정/결측', color: '#d9d9d9' },
+      ]
     })
   }, [selectedDetail])
 

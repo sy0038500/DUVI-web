@@ -127,6 +127,14 @@ function formatScore(value) {
   return n === null ? '-' : n.toFixed(2)
 }
 
+function formatSelectedScore(row) {
+  if (!row) return '-'
+  if (row.selected_score_is_missing) return '자료 없음'
+
+  const n = toNumber(row.selected_score)
+  return n === null ? '-' : n.toFixed(2)
+}
+
 export default function App() {
   const mapElementRef = useRef(null)
   const mapRef = useRef(null)
@@ -263,26 +271,20 @@ export default function App() {
   }, [yearRows])
 
   const summary = useMemo(() => {
-    const validRows = yearDetailRows.filter(
-      (row) => !row.selected_score_is_missing && row.selected_score !== null
-    )
+    const valid = yearRows.filter((row) => row.duvi_score_num !== null)
 
-    if (validRows.length === 0) return { avg: 0, max: 0, min: 0 }
+    if (valid.length === 0) {
+      return { avg: 0, max: 0, min: 0 }
+    }
 
-    const scores = validRows.map((row) => row.selected_score)
+    const scores = valid.map((row) => row.duvi_score_num)
 
     return {
       avg: scores.reduce((a, b) => a + b, 0) / scores.length,
       max: Math.max(...scores),
       min: Math.min(...scores),
     }
-  }, [yearDetailRows])
-
-  const validDetailRowCount = useMemo(() => {
-    return yearDetailRows.filter(
-      (row) => !row.selected_score_is_missing && row.selected_score !== null
-    ).length
-  }, [yearDetailRows])
+  }, [yearRows])
 
   useEffect(() => {
     if (!geoData || !mapElementRef.current) return
@@ -935,14 +937,25 @@ const yearDetailRows = useMemo(() => {
   }, [yearDetailRows])
 
   const summary = useMemo(() => {
-    if (yearDetailRows.length === 0) return { avg: 0, max: 0, min: 0 }
+    const validRows = yearDetailRows.filter((row) => {
+      return !row.selected_score_is_missing && row.selected_score !== null
+    })
 
-    const scores = yearDetailRows.map((row) => row.selected_score)
+    if (validRows.length === 0) return { avg: 0, max: 0, min: 0 }
+
+    const scores = validRows.map((row) => row.selected_score)
+
     return {
       avg: scores.reduce((a, b) => a + b, 0) / scores.length,
       max: Math.max(...scores),
       min: Math.min(...scores),
     }
+  }, [yearDetailRows])
+
+  const validDetailRowCount = useMemo(() => {
+    return yearDetailRows.filter((row) => {
+      return !row.selected_score_is_missing && row.selected_score !== null
+    }).length
   }, [yearDetailRows])
 
   useEffect(() => {
@@ -1007,12 +1020,8 @@ const yearDetailRows = useMemo(() => {
           ? feature.properties.sgg_nm
           : row?.admin_dong_name ?? feature.properties.admin_dong_name ?? feature.properties.ADM_NM
 
-        const score = row?.selected_score_is_missing
-          ? '자료 없음'
-          : row?.selected_score !== null && row?.selected_score !== undefined
-            ? row.selected_score.toFixed(2)
-            : '-'
-
+        const score = formatSelectedScore(row)
+        
         const gradeText =
           selectedDomain === 'duvi_score' && row
             ? `<br/>${row.duvi_grade}등급 ${row.duvi_grade_label}`
@@ -1213,13 +1222,7 @@ const yearDetailRows = useMemo(() => {
                   : `${selectedDong.sgg_nm} ${selectedDong.admin_dong_name}`}
               </strong>
               <span>{selectedMeta?.label} 점수</span>
-              <b>
-                {selectedDong.selected_score_is_missing
-                  ? '자료 없음'
-                  : selectedDong.selected_score !== null && selectedDong.selected_score !== undefined
-                    ? selectedDong.selected_score.toFixed(2)
-                    : '-'}
-              </b>
+              <b>{formatSelectedScore(selectedDong)}</b>
             </div>
           )}
         </aside>

@@ -237,11 +237,12 @@ export default function App() {
     ]
 
     return domains.map((domain) => {
-      const rawValue = toNumber(selectedDetail[domain.key])
-      const zeroDisplayDomains = [
-        'domain_score__에너지',
-        'domain_score__SDOT유동',
-      ]
+      const value = toNumber(selectedDetail[domain.key])
+      return {
+        ...domain,
+        value,
+      }
+    })
 
       const value =
         zeroDisplayDomains.includes(domain.key) && rawValue === null ? 0 : rawValue
@@ -562,9 +563,9 @@ export default function App() {
                   <strong>왜 사용 변수 수가 다를까요?</strong>
                   <p>
                     DUVI는 역, 센서, 공동주택 단지 등 서로 다른 단위의 원자료를 행정동 단위로 재집계합니다.
-                    지하철역이 없는 행정동은 지하철 승하차 총량이 0으로 집계되며, SDOT 센서나 공동주택
-                    에너지 자료가 없는 행정동은 일부 평균 지표가 결측으로 유지됩니다. 따라서 행정동별로
-                    실제 산정에 반영된 변수 수가 달라질 수 있습니다.
+                    지하철역이 없는 행정동은 지하철 승하차 총량이 0으로 집계될 수 있지만,
+                    SDOT 센서나 공동주택 에너지 자료가 없는 행정동은 실제 값이 0이라는 뜻이 아니라
+                    해당 원자료의 관측값이 없는 지역이므로 미산정/결측으로 표시합니다.
                   </p>
                 </div>
               </>
@@ -799,7 +800,7 @@ const domains = [
   {
     key: 'domain_score__SDOT유동',
     label: 'SDOT',
-    desc: '서울시 도시데이터 센서 기반 유동인구 지표입니다. 센서 관측자료가 없는 행정동은 세부탐색 지도에서 0점으로 표시합니다.',
+    desc: '서울시 도시데이터 센서 기반 유동인구 지표입니다. 센서 관측자료가 없는 행정동은 미산정/결측으로 표시합니다.',
     period: '2026.04.11~2026.05.17',
     selectableYears: ['2026.04~05'],
     fixedYear: 2026,
@@ -808,7 +809,7 @@ const domains = [
   {
     key: 'domain_score__에너지',
     label: '에너지',
-    desc: '공동주택 전기 사용량과 에너지 비용 부담을 함께 반영한 보조 지표입니다. 데이터가 없는 행정동은 세부탐색 지도에서 0점으로 표시합니다.',
+    desc: '공동주택 전기 사용량과 에너지 비용 부담을 함께 반영한 보조 지표입니다. desc: '공동주택 전기 사용량과 에너지 비용 부담을 함께 반영한 보조 지표입니다. 공동주택 에너지 자료가 없는 행정동은 미산정/결측으로 표시합니다.',
     period: '2024.01~2026.05',
     selectableYears: ['2024.01~2026.05'],
     fixedYear: 2026,
@@ -855,47 +856,27 @@ const domains = [
 }, [selectedMeta, selectedYear])
 
   const yearDetailRows = useMemo(() => {
-    if (isSafetyDomain) {
-      return safetyRows
-        .filter((row) => Number(row.safety_year) === Number(selectedYear))
-        .map((row) => ({
-          ...row,
-          admin_dong_code: row.sgg_nm,
-          admin_dong_name: row.sgg_nm,
-          selected_score: toNumber(row.safety_score),
-          selected_label: row.safety_value_label,
-        }))
-        .filter((row) => row.selected_score !== null)
-    }
+  if (isSafetyDomain) {
+    return safetyRows
+      .filter((row) => Number(row.safety_year) === Number(selectedYear))
+      .map((row) => ({
+        ...row,
+        admin_dong_code: row.sgg_nm,
+        admin_dong_name: row.sgg_nm,
+        selected_score: toNumber(row.safety_score),
+        selected_label: row.safety_value_label,
+      }))
+      .filter((row) => row.selected_score !== null)
+  }
 
-    return detailRows
-      .filter((row) => Number(row.duvi_year) === effectiveYear)
-      .map((row) => {
-        const rawScore = toNumber(row[selectedDomain])
-        const zeroDisplayDomains = [
-          'domain_score__에너지',
-          'domain_score__SDOT유동',
-        ]
-
-        const shouldDisplayMissingAsZero =
-          zeroDisplayDomains.includes(selectedDomain)
-
-        return {
-          ...row,
-          selected_score:
-            shouldDisplayMissingAsZero && rawScore === null ? 0 : rawScore,
-          selected_score_is_missing: rawScore === null,
-        }
-      })
-      .filter((row) => {
-        const zeroDisplayDomains = [
-          'domain_score__에너지',
-          'domain_score__SDOT유동',
-        ]
-
-        return zeroDisplayDomains.includes(selectedDomain) || row.selected_score !== null
-      })
-  }, [detailRows, safetyRows, effectiveYear, selectedYear, selectedDomain, isSafetyDomain])
+  return detailRows
+    .filter((row) => Number(row.duvi_year) === effectiveYear)
+    .map((row) => ({
+      ...row,
+      selected_score: toNumber(row[selectedDomain]),
+    }))
+    .filter((row) => row.selected_score !== null)
+}, [detailRows, safetyRows, effectiveYear, selectedYear, selectedDomain, isSafetyDomain])
 
   const detailByCode = useMemo(() => {
     const map = new Map()
@@ -1005,13 +986,8 @@ const domains = [
           selectedDomain === 'duvi_score' && row
             ? `<br/>${row.duvi_grade}등급 ${row.duvi_grade_label}`
             : ''
-        const zeroDisplayNotice =
-          row?.selected_score_is_missing &&
-          ['domain_score__에너지', 'domain_score__SDOT유동'].includes(selectedDomain)
-            ? '<br/>원자료 없음: 0점으로 표시'
-            : ''
 
-        layer.bindTooltip(`${name}<br/>${selectedMeta?.label}: ${score}${gradeText}${zeroDisplayNotice}`, {
+        layer.bindTooltip(`${name}<br/>${selectedMeta?.label}: ${score}${gradeText}`, {
           sticky: true,
           direction: 'top',
         })

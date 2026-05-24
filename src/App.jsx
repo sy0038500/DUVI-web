@@ -222,38 +222,29 @@ export default function App() {
   }, [selectedDong, detailByKey])
 
   const selectedDomainScores = useMemo(() => {
-    if (!selectedDetail) return []
+  if (!selectedDetail) return []
 
-    const domains = [
-      { key: 'domain_score__상권', label: '상권' },
-      { key: 'domain_score__인구', label: '인구' },
-      { key: 'domain_score__주택시장_주거위험', label: '주택·주거위험' },
-      { key: 'domain_score__생활시설', label: '생활시설' },
-      { key: 'domain_score__버스교통', label: '버스교통' },
-      { key: 'domain_score__지하철교통', label: '지하철교통' },
-      { key: 'domain_score__SDOT유동', label: 'SDOT 유동' },
-      { key: 'domain_score__에너지', label: '에너지' },
-      { key: 'domain_score__생활인구', label: '생활인구' },
-    ]
+  const domains = [
+    { key: 'domain_score__상권', label: '상권' },
+    { key: 'domain_score__인구', label: '인구' },
+    { key: 'domain_score__주택시장_주거위험', label: '주택·주거위험' },
+    { key: 'domain_score__생활시설', label: '생활시설' },
+    { key: 'domain_score__버스교통', label: '버스교통' },
+    { key: 'domain_score__지하철교통', label: '지하철교통' },
+    { key: 'domain_score__SDOT유동', label: 'SDOT 유동' },
+    { key: 'domain_score__에너지', label: '에너지' },
+    { key: 'domain_score__생활인구', label: '생활인구' },
+  ]
 
-    return domains.map((domain) => {
-      const value = toNumber(selectedDetail[domain.key])
-      return {
-        ...domain,
-        value,
-      }
-    })
+  return domains.map((domain) => {
+    const value = toNumber(selectedDetail[domain.key])
 
-      const value =
-        zeroDisplayDomains.includes(domain.key) && rawValue === null ? 0 : rawValue
-
-      return {
-        ...domain,
-        value,
-        value_is_missing: rawValue === null,
-      }
-    })
-  }, [selectedDetail])
+    return {
+      ...domain,
+      value,
+    }
+  })
+}, [selectedDetail])
 
   const topRows = useMemo(() => {
     return [...yearRows]
@@ -626,15 +617,15 @@ export default function App() {
         </section>
       </>
       ) : (
-    <ExplorePage
-      selectedYear={selectedYear}
-      setSelectedYear={setSelectedYear}
-      detailRows={detailRows}
-      geoData={geoData}
-      sggGeoData={sggGeoData}
-      safetyRows={safetyRows}
-    />
-  )}
+        <ExplorePage
+          selectedYear={selectedYear}
+          setSelectedYear={setSelectedYear}
+          detailRows={detailRows}
+          geoData={geoData}
+          sggGeoData={sggGeoData}
+          safetyRows={safetyRows}
+        />
+      )}
       </main>
 
       <footer className="site-footer">
@@ -809,7 +800,7 @@ const domains = [
   {
     key: 'domain_score__에너지',
     label: '에너지',
-    desc: '공동주택 전기 사용량과 에너지 비용 부담을 함께 반영한 보조 지표입니다. desc: '공동주택 전기 사용량과 에너지 비용 부담을 함께 반영한 보조 지표입니다. 공동주택 에너지 자료가 없는 행정동은 미산정/결측으로 표시합니다.',
+    desc: '공동주택 전기 사용량과 에너지 비용 부담을 함께 반영한 보조 지표입니다. 공동주택 에너지 자료가 없는 행정동은 미산정/결측으로 표시합니다.',
     period: '2024.01~2026.05',
     selectableYears: ['2024.01~2026.05'],
     fixedYear: 2026,
@@ -978,10 +969,7 @@ const domains = [
           : row?.admin_dong_name ?? feature.properties.admin_dong_name ?? feature.properties.ADM_NM
 
         const score = row ? row.selected_score.toFixed(2) : '-'
-        const missingText =
-          row?.selected_score_is_missing && selectedDomain === 'domain_score__에너지'
-            ? '<br/>자료 없음: 0점으로 표시'
-            : ''
+
         const gradeText =
           selectedDomain === 'duvi_score' && row
             ? `<br/>${row.duvi_grade}등급 ${row.duvi_grade_label}`
@@ -1054,11 +1042,12 @@ const domains = [
         <p className="eyebrow">Detailed Explorer</p>
         <h1>분야별 도시활력 세부탐색</h1>
         <p>
-          DUVI는 역, 센서, 공동주택 단지 등 서로 다른 단위의 원자료를 행정동 단위로 재집계합니다.
-          지하철역이 없는 행정동은 지하철 승하차 총량이 0으로 집계되며, SDOT 센서나 공동주택
-          에너지 자료가 없는 행정동은 세부탐색 및 상세 패널에서 0점으로 표시됩니다.
-          다만 이는 실제 유동인구나 에너지 사용량이 0이라는 의미가 아니라, 해당 원자료의 관측값이 없는 지역임을
-          전제로 해석해야 합니다.
+          DUVI는 도시를 고정된 시설 수가 아니라 변화하는 인구, 이동, 상권, 주거,
+          에너지 흐름으로 해석하는 동적 도시활력지표입니다. 세부탐색에서는 사용자의
+          관심 목적에 따라 상권, 인구, 주택위험, 생활시설, 교통, 에너지, 생활인구,
+          안전 지표를 개별 지도와 순위로 확인할 수 있습니다. SDOT 센서나 공동주택
+          에너지 자료가 없는 행정동은 실제 값이 0이라는 뜻이 아니라, 해당 원자료의
+          관측값이 없는 지역이므로 미산정/결측으로 표시합니다.
         </p>
       </div>
 

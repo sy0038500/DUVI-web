@@ -239,16 +239,14 @@ export default function App() {
   return domains.map((domain) => {
     const rawValue = toNumber(selectedDetail[domain.key])
 
-    const countKeyMap = {
-      'domain_score__SDOT유동': 'domain_variable_count__SDOT유동',
-      'domain_score__에너지': 'domain_variable_count__에너지',
-    }
-
-    const countKey = countKeyMap[domain.key]
-    const variableCount = countKey ? toNumber(selectedDetail[countKey]) : null
+    const missingWhenZeroDomains = [
+      'domain_score__SDOT유동',
+      'domain_score__에너지',
+    ]
 
     const shouldTreatAsMissing =
-      countKey && (variableCount === null || variableCount === 0)
+      missingWhenZeroDomains.includes(domain.key) &&
+      (rawValue === null || rawValue === 0)
 
     return {
       ...domain,
@@ -876,16 +874,14 @@ const yearDetailRows = useMemo(() => {
     .map((row) => {
       const rawScore = toNumber(row[selectedDomain])
 
-      const countKeyMap = {
-        'domain_score__SDOT유동': 'domain_variable_count__SDOT유동',
-        'domain_score__에너지': 'domain_variable_count__에너지',
-      }
-
-      const countKey = countKeyMap[selectedDomain]
-      const variableCount = countKey ? toNumber(row[countKey]) : null
+      const missingWhenZeroDomains = [
+        'domain_score__SDOT유동',
+        'domain_score__에너지',
+      ]
 
       const shouldTreatAsMissing =
-        countKey && (variableCount === null || variableCount === 0)
+        missingWhenZeroDomains.includes(selectedDomain) &&
+        (rawScore === null || rawScore === 0)
 
       return {
         ...row,

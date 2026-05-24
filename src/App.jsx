@@ -865,6 +865,7 @@ const yearDetailRows = useMemo(() => {
         admin_dong_name: row.sgg_nm,
         selected_score: toNumber(row.safety_score),
         selected_label: row.safety_value_label,
+        selected_score_is_missing: false,
       }))
       .filter((row) => row.selected_score !== null)
   }
@@ -889,7 +890,14 @@ const yearDetailRows = useMemo(() => {
         selected_score_is_missing: shouldTreatAsMissing,
       }
     })
-    .filter((row) => row.selected_score !== null)
+    .filter((row) => {
+      // 에너지/SDOT은 결측 행도 지도에 남겨서 회색으로 표시
+      if (['domain_score__SDOT유동', 'domain_score__에너지'].includes(selectedDomain)) {
+        return true
+      }
+
+      return row.selected_score !== null
+    })
 }, [detailRows, safetyRows, effectiveYear, selectedYear, selectedDomain, isSafetyDomain])
 
   const detailByCode = useMemo(() => {
@@ -908,12 +916,14 @@ const yearDetailRows = useMemo(() => {
 
   const topRows = useMemo(() => {
     return [...yearDetailRows]
+      .filter((row) => !row.selected_score_is_missing && row.selected_score !== null)
       .sort((a, b) => b.selected_score - a.selected_score)
       .slice(0, 10)
   }, [yearDetailRows])
 
   const bottomRows = useMemo(() => {
     return [...yearDetailRows]
+      .filter((row) => !row.selected_score_is_missing && row.selected_score !== null)
       .sort((a, b) => a.selected_score - b.selected_score)
       .slice(0, 10)
   }, [yearDetailRows])
@@ -970,7 +980,7 @@ const yearDetailRows = useMemo(() => {
       const value = row?.selected_score
 
       return {
-        fillColor: getScoreColor(value, row),
+        fillColor: row?.selected_score_is_missing ? '#d9d9d9' : getScoreColor(value, row),
         weight: 0.6,
         opacity: 1,
         color: '#ffffff',

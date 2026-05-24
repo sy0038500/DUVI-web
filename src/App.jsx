@@ -343,7 +343,7 @@ export default function App() {
             layer.bringToFront()
             layer.setStyle({
               weight: 2.5,
-              color: '#111827',
+              color: '#424242',
               fillOpacity: 0.95,
             })
           },

@@ -237,11 +237,22 @@ export default function App() {
   ]
 
   return domains.map((domain) => {
-    const value = toNumber(selectedDetail[domain.key])
+    const rawValue = toNumber(selectedDetail[domain.key])
+
+    const countKeyMap = {
+      'domain_score__SDOT유동': 'domain_variable_count__SDOT유동',
+      'domain_score__에너지': 'domain_variable_count__에너지',
+    }
+
+    const countKey = countKeyMap[domain.key]
+    const variableCount = countKey ? toNumber(selectedDetail[countKey]) : null
+
+    const shouldTreatAsMissing =
+      countKey && (variableCount === null || variableCount === 0)
 
     return {
       ...domain,
-      value,
+      value: shouldTreatAsMissing ? null : rawValue,
     }
   })
 }, [selectedDetail])
@@ -846,7 +857,7 @@ const domains = [
   return selectedYear
 }, [selectedMeta, selectedYear])
 
-  const yearDetailRows = useMemo(() => {
+const yearDetailRows = useMemo(() => {
   if (isSafetyDomain) {
     return safetyRows
       .filter((row) => Number(row.safety_year) === Number(selectedYear))
@@ -862,10 +873,26 @@ const domains = [
 
   return detailRows
     .filter((row) => Number(row.duvi_year) === effectiveYear)
-    .map((row) => ({
-      ...row,
-      selected_score: toNumber(row[selectedDomain]),
-    }))
+    .map((row) => {
+      const rawScore = toNumber(row[selectedDomain])
+
+      const countKeyMap = {
+        'domain_score__SDOT유동': 'domain_variable_count__SDOT유동',
+        'domain_score__에너지': 'domain_variable_count__에너지',
+      }
+
+      const countKey = countKeyMap[selectedDomain]
+      const variableCount = countKey ? toNumber(row[countKey]) : null
+
+      const shouldTreatAsMissing =
+        countKey && (variableCount === null || variableCount === 0)
+
+      return {
+        ...row,
+        selected_score: shouldTreatAsMissing ? null : rawScore,
+        selected_score_is_missing: shouldTreatAsMissing,
+      }
+    })
     .filter((row) => row.selected_score !== null)
 }, [detailRows, safetyRows, effectiveYear, selectedYear, selectedDomain, isSafetyDomain])
 

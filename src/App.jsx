@@ -263,20 +263,26 @@ export default function App() {
   }, [yearRows])
 
   const summary = useMemo(() => {
-    const valid = yearRows.filter((row) => row.duvi_score_num !== null)
+    const validRows = yearDetailRows.filter(
+      (row) => !row.selected_score_is_missing && row.selected_score !== null
+    )
 
-    if (valid.length === 0) {
-      return { avg: 0, max: 0, min: 0 }
-    }
+    if (validRows.length === 0) return { avg: 0, max: 0, min: 0 }
 
-    const scores = valid.map((row) => row.duvi_score_num)
+    const scores = validRows.map((row) => row.selected_score)
 
     return {
       avg: scores.reduce((a, b) => a + b, 0) / scores.length,
       max: Math.max(...scores),
       min: Math.min(...scores),
     }
-  }, [yearRows])
+  }, [yearDetailRows])
+
+  const validDetailRowCount = useMemo(() => {
+    return yearDetailRows.filter(
+      (row) => !row.selected_score_is_missing && row.selected_score !== null
+    ).length
+  }, [yearDetailRows])
 
   useEffect(() => {
     if (!geoData || !mapElementRef.current) return
@@ -1001,7 +1007,11 @@ const yearDetailRows = useMemo(() => {
           ? feature.properties.sgg_nm
           : row?.admin_dong_name ?? feature.properties.admin_dong_name ?? feature.properties.ADM_NM
 
-        const score = row ? row.selected_score.toFixed(2) : '-'
+        const score = row?.selected_score_is_missing
+          ? '자료 없음'
+          : row?.selected_score !== null && row?.selected_score !== undefined
+            ? row.selected_score.toFixed(2)
+            : '-'
 
         const gradeText =
           selectedDomain === 'duvi_score' && row
@@ -1170,7 +1180,7 @@ const yearDetailRows = useMemo(() => {
             </div>
             <div>
               <dt>{isSafetyDomain ? '산정 가능 구' : '산정 가능 동'}</dt>
-              <dd>{yearDetailRows.length}개</dd>
+              <dd>{validDetailRowCount}개</dd>
             </div>
             <div>
               <dt>평균 점수</dt>
@@ -1203,7 +1213,13 @@ const yearDetailRows = useMemo(() => {
                   : `${selectedDong.sgg_nm} ${selectedDong.admin_dong_name}`}
               </strong>
               <span>{selectedMeta?.label} 점수</span>
-              <b>{selectedDong.selected_score.toFixed(2)}</b>
+              <b>
+                {selectedDong.selected_score_is_missing
+                  ? '자료 없음'
+                  : selectedDong.selected_score !== null && selectedDong.selected_score !== undefined
+                    ? selectedDong.selected_score.toFixed(2)
+                    : '-'}
+              </b>
             </div>
           )}
         </aside>

@@ -416,26 +416,30 @@ export default function App() {
           }}
         >
           <img src={`${BASE_URL}logo_icon.png`} alt="DUVI logo" />
-          <div>
+          <div className="brand-text">
             <strong>DUVI</strong>
-            <span className='brand-mobile-line'>서울 행정동</span>
-            <span className='brand-mobile-line'>도시활력지표</span>
+            <p className="brand-subtitle">
+              <span className="brand-mobile-line">서울 행정동</span>
+              <span className="brand-mobile-line">도시활력지표</span>
+            </p>
           </div>
         </div>
+
         <div className="header-actions">
           <button
             className={page === 'home' ? 'active' : ''}
             onClick={() => setPage('home')}
           >
-            <span className='Mobile-split'>종합</span>
-            <span className='Mobile-split'>지도</span>
+            <span className="mobile-split">종합</span>
+            <span className="mobile-split">지도</span>
           </button>
+
           <button
             className={page === 'explore' ? 'active' : ''}
             onClick={() => setPage('explore')}
           >
-            <span className='Mobile-split'>세부</span>
-            <span className='Mobile-split'>탐색</span>
+            <span className="mobile-split">세부</span>
+            <span className="mobile-split">탐색</span>
           </button>
         </div>
       </header>

@@ -1179,60 +1179,112 @@ html {
   }
 }
 
-/* 기본: PC/태블릿에서는 한 줄 */
-.mobile-split {
-  display: inline;
+/* ===== Header responsive fix ===== */
+.brand {
+  gap: 0.65rem;
+  padding: 0.28rem 0.45rem;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+}
+
+.brand strong {
+  margin: 0;
+  line-height: 1;
+}
+
+.brand-subtitle {
+  margin: 2px 0 0;
+  display: block;
+  font-size: 0.82rem;
+  line-height: 1.05;
+  color: #64748b;
   white-space: nowrap;
 }
 
-/* 모바일에서만 두 줄 */
-@media (max-width: 480px) {
-  .header-actions button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    line-height: 1.15;
-    word-break: keep-all;
-    white-space: nowrap;
-  }
-
-  .mobile-split {
-    display: block;
-  }
-}
-
-/* PC / 태블릿: 한 줄 */
-.brand-subtitle {
-  display: block !important;
-  white-space: nowrap !important;
-  line-height: 1.25;
-}
-
 .brand-subtitle .brand-mobile-line {
-  display: inline !important;
-  white-space: nowrap !important;
+  display: inline;
+  white-space: nowrap;
 }
 
 .brand-subtitle .brand-mobile-line + .brand-mobile-line::before {
   content: " ";
 }
 
-/* 모바일에서만 두 줄 */
+.mobile-split {
+  display: inline;
+  white-space: nowrap;
+}
+
 @media (max-width: 480px) {
+  .site-header {
+    height: 64px;
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .brand {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 8px;
+    padding: 0.18rem 0.25rem;
+  }
+
+  .brand img {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 auto;
+  }
+
+  .brand-text {
+    min-width: 0;
+  }
+
+  .brand strong {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
   .brand-subtitle {
-    display: flex !important;
-    flex-direction: column !important;
-    white-space: normal !important;
-    line-height: 1.25;
+    margin-top: 1px;
+    font-size: 11.5px;
+    line-height: 1.05;
+    white-space: normal;
   }
 
   .brand-subtitle .brand-mobile-line {
-    display: block !important;
+    display: block;
   }
 
   .brand-subtitle .brand-mobile-line + .brand-mobile-line::before {
     content: "";
+  }
+
+  .header-actions {
+    flex: 0 0 auto;
+    gap: 6px;
+  }
+
+  .header-actions button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    height: 42px;
+    padding: 0 8px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    line-height: 1.05;
+    word-break: keep-all;
+    white-space: nowrap;
+  }
+
+  .mobile-split {
+    display: block;
   }
 }

@@ -418,8 +418,8 @@ export default function App() {
           <img src={`${BASE_URL}logo_icon.png`} alt="DUVI logo" />
           <div>
             <strong>DUVI</strong>
-            <span>서울 행정동</span>
-            <span>도시활력지표</span>
+            <span className='brand-mobile-line'>서울 행정동</span>
+            <span className='brand-mobile-line'>도시활력지표</span>
           </div>
         </div>
         <div className="header-actions">

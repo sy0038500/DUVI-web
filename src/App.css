@@ -1202,3 +1202,37 @@ html {
     display: block;
   }
 }
+
+/* PC / 태블릿: 한 줄 */
+.brand-subtitle {
+  display: block !important;
+  white-space: nowrap !important;
+  line-height: 1.25;
+}
+
+.brand-subtitle .brand-mobile-line {
+  display: inline !important;
+  white-space: nowrap !important;
+}
+
+.brand-subtitle .brand-mobile-line + .brand-mobile-line::before {
+  content: " ";
+}
+
+/* 모바일에서만 두 줄 */
+@media (max-width: 480px) {
+  .brand-subtitle {
+    display: flex !important;
+    flex-direction: column !important;
+    white-space: normal !important;
+    line-height: 1.25;
+  }
+
+  .brand-subtitle .brand-mobile-line {
+    display: block !important;
+  }
+
+  .brand-subtitle .brand-mobile-line + .brand-mobile-line::before {
+    content: "";
+  }
+}

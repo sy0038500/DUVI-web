@@ -418,7 +418,8 @@ export default function App() {
           <img src={`${BASE_URL}logo_icon.png`} alt="DUVI logo" />
           <div>
             <strong>DUVI</strong>
-            <span>서울 행정동 도시활력지표</span>
+            <span>서울 행정동</span>
+            <span>도시활력지표</span>
           </div>
         </div>
         <div className="header-actions">
@@ -426,13 +427,15 @@ export default function App() {
             className={page === 'home' ? 'active' : ''}
             onClick={() => setPage('home')}
           >
-            종합지도
+            <span className='Mobile-split'>종합</span>
+            <span className='Mobile-split'>지도</span>
           </button>
           <button
             className={page === 'explore' ? 'active' : ''}
             onClick={() => setPage('explore')}
           >
-            세부탐색
+            <span className='Mobile-split'>세부</span>
+            <span className='Mobile-split'>탐색</span>
           </button>
         </div>
       </header>

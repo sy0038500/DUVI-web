@@ -1178,3 +1178,27 @@ html {
     line-height: 1.2;
   }
 }
+
+/* 기본: PC/태블릿에서는 한 줄 */
+.mobile-split {
+  display: inline;
+  white-space: nowrap;
+}
+
+/* 모바일에서만 두 줄 */
+@media (max-width: 480px) {
+  .header-actions button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    line-height: 1.15;
+    word-break: keep-all;
+    white-space: nowrap;
+  }
+
+  .mobile-split {
+    display: block;
+  }
+}
